@@ -1,0 +1,58 @@
+.signUp{
+  background-image: url("https://img.freepik.com/free-vector/instagram-background-gradient-colors_23-2147819864.jpg?semt=ais_incoming&w=740&q=80");
+  background-size: cover;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form{
+  background-color: #fff;
+  padding: 30px;
+  border: 1px solid rgb(110, 109, 109);
+  border-radius: 1px;
+}
+.signUpLogo{
+  width: 200px;
+  object-fit: contain;
+  padding: 10px 0px;
+}
+.loginPara{
+  color: dimgrey;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 20px;
+  margin: 0px 40px 20px 40px;
+}
+input{
+  padding: 5px;
+  margin: 3px 0px;
+  font-size: 16px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.form > div{
+  width: 80%;
+  margin: auto;
+}
+#submit-btn{
+  background-color: #1773EA;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 3px;
+  padding:  5px 10px;
+  width: 80%;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.form2{
+  background-color: #fff;
+  padding: 30px;
+  margin-top: 5px;
+  border: 1px solid rgb(110, 109, 109);
+  border-radius: 1px;
+}
