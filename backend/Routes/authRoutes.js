@@ -2,10 +2,17 @@ const express = require("express")
 const router =  express.Router();
 const bcrypt = require("bcrypt")
 const USER = require("../models/model.js")
+const jwt = require("jsonwebtoken")
+const reqLogin = require("../middlewares/reqLogin");
 
+const JWT_SECRET = "harsh@144";
 router.get("/",(req,res)=>{
   res.send("Hello");
 });
+
+router.get('/createPost',reqLogin,(req,res)=>{
+  console.log("hello harsh")
+})
 
 router.post("/signup", async(req,res)=>{
   const { name, userName, email, password} = req.body;
@@ -47,7 +54,10 @@ router.post("/signin",async(req,res)=>{
     bcrypt.compare(password, savesUser.password)
     .then(isMatch=>{
         if(isMatch){
-          return res.json({message:"SignIn Successfully"})
+          // return res.json({message:"SignIn Successfully"})
+          const token = jwt.sign({_id:savesUser._id}, JWT_SECRET)
+          console.log(token)
+          res.json({token})
         }else{
           return res.status(422).json({error:"Invalid  Password"})
         }
