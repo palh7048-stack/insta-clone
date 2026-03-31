@@ -17,18 +17,18 @@ const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
   const postData = ()=>{
-    // if(!emailRegex.test(email)){
-    //   notify("Enter proper email");
-    //   return;
-    // }
-    // else if(!passwordRegex.test(password)){
-    //   notify("Password must be at least 8 characters long and contain at least 1 letter and 1 number");
-    //   return;
-    // }
+    if(!emailRegex.test(email)){
+      notify("Enter proper email");
+      return;
+    }
+    else if(!passwordRegex.test(password)){
+      notify("Password must be at least 8 characters long and contain at least 1 letter and 1 number");
+      return;
+    }
 
     // sending data to server
     fetch("http://localhost:5000/signup",{

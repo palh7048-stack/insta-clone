@@ -20,7 +20,7 @@ const [password, setPassword] = useState("");
 
 const postData = ()=>{ 
   // if(!checkEmail.test(email)){
-  //   notify("Enter Proper Email")
+  //   notify("Enter Proper Email");
   //   return;
   // }
 
