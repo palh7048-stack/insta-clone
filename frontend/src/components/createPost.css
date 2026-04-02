@@ -1,6 +1,6 @@
 .createPost{
   max-width: 500px;
-  margin: 96px 35% ;
+  margin: 100px 35% ;
   border: 1px solid rgb(173,173,173);
   border-radius: 5px;
 }
@@ -23,7 +23,7 @@
 textarea{
   width: 90%;
   border: none;
-  overflow: none;
+  outline: none;
 }
 #output{
   width: 300px;
