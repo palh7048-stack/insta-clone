@@ -56,3 +56,25 @@ input{
   border: 1px solid rgb(110, 109, 109);
   border-radius: 1px;
 }
+#otp-btn{
+  background-color: #1773EA;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 3px;
+  padding:  5px 10px;
+  width: 80%;
+  cursor: pointer;
+  margin-top: 8px;
+}
+#verify-btn{
+  background-color: #1773EA;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 3px;
+  padding:  5px 10px;
+  width: 80%;
+  cursor: pointer;
+  margin-top: 8px;
+}
