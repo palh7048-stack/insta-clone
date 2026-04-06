@@ -20,7 +20,7 @@ export default function SignUp() {
 
   // ---------------- SEND OTP ----------------
   const sendOtp = () => {
-    if (!email) return notify("Enter email first");
+    if (!email) return notify("Enter Email First to get OTP");
 
     fetch("http://localhost:5000/send-otp", {
       method: "post",
@@ -32,11 +32,14 @@ export default function SignUp() {
         if (data.error) notify(data.error);
         else notifyS("OTP sent to your email successfully and valid for 1 minutes");
       })
-      .catch(() => notify("Server error"));
-      };
+      .catch(() => notify("OTP sending to your email Failed"));
+  };
 
   // ---------------- VERIFY OTP ----------------
   const verifyOtp = () => {
+
+    if (!otp) return notify("Enter OTP for verification"); 
+
     fetch("http://localhost:5000/verify-otp", {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -49,14 +52,16 @@ export default function SignUp() {
           notifyS("your OTP is successfully verified");
           setOtpVerified(true);
         }
-      });
+      })
+      .catch(() => notify(" your OTP is expired ")); 
   };
 
   // ---------------- SIGNUP ----------------
   const postData = () => {
-    if (!name || !userName || !email || !password) {
-      return notify("Fill all the fields");
-    }
+   if(!name) return notify("Please Enter Name");
+   if(!userName) return notify("Please Enter userName");
+   if(!email) return notify("Please Enter Email");
+   if(!password) return notify("Please Enter Password");
 
     if (!otpVerified) {
       return notify("Please verify OTP first");
@@ -75,7 +80,7 @@ export default function SignUp() {
           navigate("/signin");
         }
       })
-      .catch(() => notify("Server error"));
+      .catch(() => notify("Signup Failed"));
   };
 
   return (
@@ -88,39 +93,46 @@ export default function SignUp() {
           <p className="loginPara">
             Sign up to see Photo and videos <br/> from your friends 
           </p>
-            <div> 
+
+          <div> 
             <input type="email" placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          /></div>
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-             <div>
-          <input type="text" placeholder="Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          /></div>
+          <div>
+            <input type="text" placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
              
-           <div>
-          <input type="text" placeholder="Username"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-          /></div>
+          <div>
+            <input type="text" placeholder="Username"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
 
-           <div>
-          <input type="password" placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          /></div>
+          <div>
+            <input type="password" placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-           <div>
-          <input type="text" placeholder="Enter OTP"value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          /></div>
+          <div>
+            <input type="text" placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+          </div>
 
           <input type="button" id="otp-btn" value="Get OTP" onClick={sendOtp} />
           <input type="button" id="verify-btn" value="Verify OTP" onClick={verifyOtp} />
 
-            <p className="loginPara" style={{fontSize:"12px", margin:"3px 0px"}}>
+          <p className="loginPara" style={{fontSize:"12px", margin:"3px 0px"}}>
             By Signing up, you Agree to our Terms, <br/>
             privacy policy and cookies policy 
           </p>
