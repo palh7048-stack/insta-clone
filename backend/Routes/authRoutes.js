@@ -5,17 +5,18 @@ const USER = require("../models/model.js");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer"); 
 const reqLogin = require("../middlewares/reqLogin.js");
+const validation = require("../Validation/userSchema.js");
 
 const JWT_SECRET = "harsh@144";
 
 const otpStore = {};
 
-// ---------------- MAIL SETUP ----------------
+// ---------------- MAIL ----------------
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "palh7048@gmail.com",      // Your Gmail
-    pass: "clnqdmztjctejgfo"          // App password
+    user: "palh7048@gmail.com",      
+    pass:  "clnqdmztjctejgfo"        
   }
 });
 
@@ -24,12 +25,13 @@ router.get("/", (req, res) => {
   res.send("Hello");
 });
 
-// ---------------- CREATE POST (protected) ----------------
+// ---------------- CREATE POST ----------------
 router.get("/createPost", reqLogin, (req, res) => {
   console.log("hello harsh");
+  res.json({ message: "Authorized user" }); 
 });
 
-// ---------------- SEND OTP ----------------
+// ------------------ SEND OTP ----------------
 router.post("/send-otp", async (req, res) => {
   const { email } = req.body;
 
@@ -37,11 +39,11 @@ router.post("/send-otp", async (req, res) => {
     return res.status(422).json({ error: "Email required" });
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000); // 6 digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000);
 
   otpStore[email] = {
     otp: otp,
-    expires: Date.now() + 1* 60 * 1000, 
+    expires: Date.now() + 1 * 60 * 1000,
   };
 
   try {
@@ -49,12 +51,12 @@ router.post("/send-otp", async (req, res) => {
       from: "palh7048@gmail.com",
       to: email,
       subject: "Your OTP Code for registration", 
-      html: `<h2>Your OTP is: ${otp}</h2>`,
+      html: `<h2>Your OTP is: ${otp} for Social Media App</h2>`,
     });
     res.json({ message: "OTP sent to your email" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Email send failed" });
+    res.status(500).json({ error: "Email is invalid" });
   }
 });
 
@@ -80,65 +82,78 @@ router.post("/verify-otp", (req, res) => {
 
 // ---------------- SIGNUP ----------------
 router.post("/signup", async (req, res) => {
-  const { name, userName, email, password } = req.body;
+  try {
+    const validatedData = await validation.validate(req.body,{abortEarly:false});
+    console.log("validatedData is successfully", validatedData);
 
-  if (!name || !userName || !email || !password) {
-    return res.status(422).json({ error: "Please Enter all the Fields" });
+    const { name, userName, email, password } = validatedData;
+    
+    if (!otpStore[email] || !otpStore[email].verified) {
+      return res.status(422).json({ error: "Please verify OTP first" });
+    }
+
+    const userExist = await USER.findOne({
+      $or: [{ email }, { userName }]
+    });
+
+    if (userExist) {
+      return res.status(422).json({ error: "Name or Email Already Exist" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = new USER({
+      name,
+      email,
+      userName,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+
+    delete otpStore[email]; 
+    res.json({ message: "Registered successfully", token });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ error: err.message }); 
   }
-
-  // Check OTP verified
-  if (!otpStore[email] || !otpStore[email].verified) {
-    return res.status(422).json({ error: "Please verify OTP first" });
-  }
-
-  const userExist = await USER.findOne({ $or: [{ email }, { name }] })
-    .then((userExist) => {
-      if (userExist) {
-        return res.status(422).json({ error: "Name or Email Already Exist" });
-      }
-    })
-    .catch((err) => console.log(err));
-
-  const hashedPassword = await bcrypt.hash(password, 12);
-  const user = new USER({
-    name,
-    email,
-    userName,
-    password: hashedPassword,
-  });
-
-  user
-    .save()
-    .then((user) => res.json({ message: "Registered successfully" }))
-    .catch((err) => console.log(err));
 });
 
 // ---------------- SIGNIN ----------------
 router.post("/signin", async (req, res) => {
   const { userName, password } = req.body;
 
-  if (!userName || !password) {
-    return res.status(422).json({ error: "Please Enter All the Fields" });
+  if (!userName) {
+    return res.status(422).json({ error: "Please Enter userName" });
+  }
+  if (!password) {
+    return res.status(422).json({ error: "Please Enter password" });
   }
 
-  await USER.findOne({ userName })
-    .then((savesUser) => {
-      if (!savesUser) {
-        return res.status(422).json({ error: "Invalid UserName or Password" });
-      }
-      bcrypt
-        .compare(password, savesUser.password)
-        .then((isMatch) => {
-          if (isMatch) {
-            const token = jwt.sign({ _id: savesUser._id }, JWT_SECRET);
-            res.json({ token });
-          } else {
-            return res.status(422).json({ error: "Invalid Password" });
-          }
-        })
-        .catch((err) => console.log(err));
-    })
-    .catch((err) => console.log(err));
+  try {
+    const savesUser = await USER.findOne({ userName });
+
+    if (!savesUser) {
+      return res.status(422).json({ error: "Invalid UserName or Password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, savesUser.password);
+
+    if (isMatch) {
+      const token = jwt.sign({ _id: savesUser._id }, JWT_SECRET);
+      res.json({ token });
+      console.log(token)
+    } else {
+      return res.status(422).json({ error: "Invalid Password! please Enter correct Password" });
+    }
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Signin failed" });
+  }
 });
 
 module.exports = router;
