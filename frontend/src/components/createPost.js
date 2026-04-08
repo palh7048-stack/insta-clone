@@ -7,10 +7,38 @@ import icone from "../image/icone.png"
 export default function Createpost() {
  const [body, setBody] = useState("")
  const [image, setImage] =useState("")
+ const [url, setUrl] = useState("")
 
-const postDetails = ()=>{
-  console.log(body,image)
-}
+ /*posting image to cloudinary */
+  const postDetails = ()=>{
+    console.log(body,image)
+    const data = new FormData()
+      data.append("file",image)  
+      data.append("upload_preset","insta-clone")
+      data.append("cloud_name","dtbmdd5um")
+    fetch("https://api.cloudinary.com/v1_1/dtbmdd5um/image/upload",
+    {
+      method:"post",
+      body:data 
+    }).then(res=>res.json())
+    .then(data => setUrl(data.url))
+    .catch(err=> console.log(err))
+
+    // saving post to mongodb
+    fetch("http:// localhost:5000/createPost",{
+      method:"post",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorizaton":  "Bearer " + localStorage.getItem("jwt")
+
+    },
+      body:JSON.stringify({body,
+      pic:url})
+    }).then(res=>res.jon())
+    .then(data=>console.log(data))
+    .catch(err=>console.log(err))
+  }
+
 
 
   const loadfile = (event)=>{

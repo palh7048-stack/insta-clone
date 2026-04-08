@@ -14,7 +14,6 @@ export default function Home(){
             </div>
             <h5>John</h5>
           </div>
-          {/*card-post*/}
           <div className="card-image"> 
             <img src={post} alt="post"/>
           </div>

@@ -20,7 +20,7 @@ const [password, setPassword] = useState("");
 
 const postData = ()=>{ 
   // if(!checkEmail.test(email)){
-  //   notify("Enter Proper Email");
+  //   notify("Enter correct Email");
   //   return;
   // }
 
@@ -41,6 +41,8 @@ const postData = ()=>{
       notify(data.error)
     }else{
       notifyS(data.message)
+      console.log(data)
+      localStorage.setItem("jwt",data)
       navigate("/")
     }
   })

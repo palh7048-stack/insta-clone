@@ -18,6 +18,10 @@ export default function SignUp() {
   const [otp, setOtp] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
 
+ 
+  const [showOtpSection, setShowOtpSection] = useState(false);
+  const [showVerifyButton, setShowVerifyButton] = useState(false);
+
   // ---------------- SEND OTP ----------------
   const sendOtp = () => {
     if (!email) return notify("Enter Email First to get OTP");
@@ -30,14 +34,16 @@ export default function SignUp() {
       .then(res => res.json())
       .then(data => {
         if (data.error) notify(data.error);
-        else notifyS("OTP sent to your email successfully and valid for 1 minutes");
+        else {
+          notifyS("OTP sent to your email successfully and valid for 1 minutes");
+          setShowVerifyButton(true); 
+        }
       })
       .catch(() => notify("OTP sending to your email Failed"));
   };
 
   // ---------------- VERIFY OTP ----------------
   const verifyOtp = () => {
-
     if (!otp) return notify("Enter OTP for verification"); 
 
     fetch("http://localhost:5000/verify-otp", {
@@ -49,21 +55,24 @@ export default function SignUp() {
       .then(data => {
         if (data.error) notify(data.error);
         else {
-          notifyS("your OTP is successfully verified");
+          notifyS("Your OTP is successfully verified");
           setOtpVerified(true);
+          setShowOtpSection(false); 
         }
       })
-      .catch(() => notify(" your OTP is expired ")); 
+      .catch(() => notify("Your OTP is expired")); 
   };
 
   // ---------------- SIGNUP ----------------
   const postData = () => {
-   if(!name) return notify("Please Enter Name");
-   if(!userName) return notify("Please Enter userName");
-   if(!email) return notify("Please Enter Email");
-   if(!password) return notify("Please Enter Password");
+    if(!name) return notify("Please Enter Name");
+    if(!userName) return notify("Please Enter userName");
+    if(!email) return notify("Please Enter Email");
+    if(!password) return notify("Please Enter Password");
 
     if (!otpVerified) {
+      
+      setShowOtpSection(true);
       return notify("Please verify OTP first");
     }
 
@@ -95,42 +104,45 @@ export default function SignUp() {
           </p>
 
           <div> 
-            <input type="email" placeholder="Email"
-              value={email}
+            <input type="email" placeholder="Email" value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div>
-            <input type="text" placeholder="Full Name"
-              value={name}
+            <input type="text" placeholder="Full Name" value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
              
           <div>
-            <input type="text" placeholder="Username"
-              value={userName}
+            <input type="text" placeholder="Username" value={userName}
               onChange={(e) => setUserName(e.target.value)}
             />
           </div>
 
           <div>
-            <input type="password" placeholder="Password"
-              value={password}
+            <input type="password" placeholder="Password" value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          <div>
-            <input type="text" placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-          </div>
+          {showOtpSection && (
+            <>
+              <div>
+                <input type="text" placeholder="Enter OTP" value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+              </div>
 
-          <input type="button" id="otp-btn" value="Get OTP" onClick={sendOtp} />
-          <input type="button" id="verify-btn" value="Verify OTP" onClick={verifyOtp} />
+              <input type="button" id="otp-btn" value="Get OTP" onClick={sendOtp} />
+            </>
+          )}
+
+          
+          {showVerifyButton && (
+            <input type="button" id="verify-btn" value="Verify OTP" onClick={verifyOtp} />
+          )}
 
           <p className="loginPara" style={{fontSize:"12px", margin:"3px 0px"}}>
             By Signing up, you Agree to our Terms, <br/>
@@ -141,8 +153,7 @@ export default function SignUp() {
 
         </div>
 
-        <div className="form2">
-          Already have an account?
+        <div className="form2"> Already have an account?
           <Link to="/signin">
             <span style={{ color: "blue" }}>Sign In</span>
           </Link>
