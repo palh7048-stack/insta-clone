@@ -5,6 +5,7 @@ const USER = require("../models/model.js");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer"); 
 const reqLogin = require("../middlewares/reqLogin.js");
+require("dotenv").config();
 
 const JWT_SECRET = "harsh@144";
 
@@ -14,8 +15,8 @@ const otpStore = {};
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "palh7048@gmail.com",      
-    pass:  "clnqdmztjctejgfo"        
+    user: process.env.USER_EMAIL,      
+    pass:  process.env.EMAIL_PASS        
   }
 });
 
@@ -47,7 +48,7 @@ router.post("/send-otp", async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: "palh7048@gmail.com",
+      from: process.env.USER_EMAIL,
       to: email,
       subject: "Your OTP  for registration", 
       html: `<h2>Your OTP is: ${otp} for Social Media App</h2> and Fill correct OTP in the OTP field for successful registration.<br/><br> <style>color: #c51515;</style> Note: Please  do not share your OTP with anyone. Your OTP is valid for 1 minute.<br/><br/><p style="color: #c51515;"> please do not reply.</p>`,

@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
-const MONGO_URL = "mongodb+srv://harsh123:Harsh144@cluster0.kiy8vcw.mongodb.net/insta?appName=Cluster0";
+
+const MONGO_URL = process.env.MONGO_URI;
 
 const connectDB = async () => {
   try {
