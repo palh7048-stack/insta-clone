@@ -5,7 +5,6 @@ const USER = require("../models/model.js");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer"); 
 const reqLogin = require("../middlewares/reqLogin.js");
-const validation = require("../Validation/userSchema.js");
 
 const JWT_SECRET = "harsh@144";
 
@@ -50,8 +49,8 @@ router.post("/send-otp", async (req, res) => {
     await transporter.sendMail({
       from: "palh7048@gmail.com",
       to: email,
-      subject: "Your OTP Code for registration", 
-      html: `<h2>Your OTP is: ${otp} for Social Media App</h2>`,
+      subject: "Your OTP  for registration", 
+      html: `<h2>Your OTP is: ${otp} for Social Media App</h2> and Fill correct OTP in the OTP field for successful registration.<br/><br> <style>color: #c51515;</style> Note: Please  do not share your OTP with anyone. Your OTP is valid for 1 minute.<br/><br/><p style="color: #c51515;"> please do not reply.</p>`,
     });
     res.json({ message: "OTP sent to your email" });
   } catch (err) {
@@ -82,12 +81,12 @@ router.post("/verify-otp", (req, res) => {
 
 // ---------------- SIGNUP ----------------
 router.post("/signup", async (req, res) => {
+  const { name, email, userName, password } = req.body;
+   if (!name)  return res.status(422).json({ error: "Please Enter Name" });
+    if (!userName) return res.status(422).json({ error: "Please Enter userName" }); 
+    if (!email) return res.status(422).json({ error: "Please Enter Email" });
+    if (!password) return res.status(422).json({ error: "Please Enter Password" });
   try {
-    const validatedData = await validation.validate(req.body,{abortEarly:false});
-    console.log("validatedData is successfully", validatedData);
-
-    const { name, userName, email, password } = validatedData;
-    
     if (!otpStore[email] || !otpStore[email].verified) {
       return res.status(422).json({ error: "Please verify OTP first" });
     }
