@@ -18,10 +18,8 @@ export default function SignUp() {
   const [otp, setOtp] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
 
- 
-  const [showOtpSection, setShowOtpSection] = useState(false);
-  const [showVerifyButton, setShowVerifyButton] = useState(false);
-
+  const [showGetOtpBtn, setShowGetOtpBtn] = useState(false); 
+  const [showVerifyOtpSection, setShowVerifyOtpSection] = useState(false); 
   // ---------------- SEND OTP ----------------
   const sendOtp = () => {
     if (!email) return notify("Enter Email First to get OTP");
@@ -35,8 +33,8 @@ export default function SignUp() {
       .then(data => {
         if (data.error) notify(data.error);
         else {
-          notifyS("OTP sent to your email successfully and valid for 1 minutes");
-          setShowVerifyButton(true); 
+          notifyS("OTP sent to your email successfully and valid for 1 minute");
+          setShowVerifyOtpSection(true); // Show OTP input + Verify button
         }
       })
       .catch(() => notify("OTP sending to your email Failed"));
@@ -57,39 +55,40 @@ export default function SignUp() {
         else {
           notifyS("Your OTP is successfully verified");
           setOtpVerified(true);
-          setShowOtpSection(false); 
+
+        
+          fetch("http://localhost:5000/signup", {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, userName, email, password })
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.error) notify(data.error);
+              else {
+                notifyS(data.message);
+                navigate("/signin");
+              }
+            })
+            .catch(() => notify("Signup Failed"));
         }
       })
-      .catch(() => notify("Your OTP is expired")); 
+      .catch(() => notify("Your OTP is expired or invalid"));
   };
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+ // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   // ---------------- SIGNUP ----------------
-  const postData = () => {
-    if(!name) return notify("Please Enter Name");
-    if(!userName) return notify("Please Enter userName");
-    if(!email) return notify("Please Enter Email");
-    if(!password) return notify("Please Enter Password");
+  const handleSignUpClick = () => {
+    if (!email) return notify("Please Enter Email");
+     if (!emailRegex.test(email)) return notify("Please Enter Valid Email");
+    if (!name) return notify("Please Enter Name");
+    if (!userName) return notify("Please Enter userName");
+    if (!password) return notify("Please Enter Password");
+    // if (!passwordRegex.test(password)) return notify("Password must be minimum 8 characters, at least one letter and one number");
 
-    if (!otpVerified) {
-      
-      setShowOtpSection(true);
-      return notify("Please verify OTP first");
-    }
-
-    fetch("http://localhost:5000/signup", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, userName, email, password })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) notify(data.error);
-        else {
-          notifyS(data.message);
-          navigate("/signin");
-        }
-      })
-      .catch(() => notify("Signup Failed"));
+    // Show Get OTP button
+    setShowGetOtpBtn(true);
   };
 
   return (
@@ -100,48 +99,53 @@ export default function SignUp() {
           <img className="signUpLogo" src={logo} alt="Logo" />
 
           <p className="loginPara">
-            Sign up to see Photo and videos <br/> from your friends 
+            Sign up to see Photo and videos <br /> from your friends 
           </p>
 
           <div> 
-            <input type="email" placeholder="Email" value={email}
+            <input type="email" placeholder="Email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
           <div>
-            <input type="text" placeholder="Full Name" value={name}
+            <input type="text" placeholder="Full Name"
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-             
+              
           <div>
-            <input type="text" placeholder="Username" value={userName}
+            <input type="text" placeholder="Username"
+              value={userName}
               onChange={(e) => setUserName(e.target.value)}
             />
           </div>
 
           <div>
-            <input type="password" placeholder="Password" value={password}
+            <input type="password" placeholder="Password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          {showOtpSection && (
+          {/* ---------------- GET OTP BUTTON ---------------- */}
+          {showGetOtpBtn && !showVerifyOtpSection && (
+            <input type="button" id="otp-btn" value="Get OTP" onClick={sendOtp} />
+          )}
+
+          {/* ---------------- OTP INPUT + VERIFY BUTTON ---------------- */}
+          {showVerifyOtpSection && (
             <>
               <div>
-                <input type="text" placeholder="Enter OTP" value={otp}
+                <input type="text" placeholder="Enter OTP"
+                  value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                 />
               </div>
-
-              <input type="button" id="otp-btn" value="Get OTP" onClick={sendOtp} />
+              <input type="button" id="verify-btn" value="Verify OTP" onClick={verifyOtp} />
             </>
-          )}
-
-          
-          {showVerifyButton && (
-            <input type="button" id="verify-btn" value="Verify OTP" onClick={verifyOtp} />
           )}
 
           <p className="loginPara" style={{fontSize:"12px", margin:"3px 0px"}}>
@@ -149,11 +153,13 @@ export default function SignUp() {
             privacy policy and cookies policy 
           </p>
 
-          <input type="button" id="submit-btn" value="Sign Up" onClick={postData} />
+          {/* Original Sign Up button */}
+          <input type="button" id="submit-btn" value="Sign Up" onClick={handleSignUpClick} />
 
         </div>
 
-        <div className="form2"> Already have an account?
+        <div className="form2">
+          Already have an account?
           <Link to="/signin">
             <span style={{ color: "blue" }}>Sign In</span>
           </Link>

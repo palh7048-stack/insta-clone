@@ -4,6 +4,11 @@ import "./Navbar.css";
 import { Link } from 'react-router-dom';
 
 export default function Navbar(){
+  const loginStatus = () => {
+    const token = localStorage.getItem("jwt");
+    console.log(token);
+  }
+  loginStatus();
   return(
     <div className='navbar'>
       <img src ={logo} alt='instagram-logo'></img>

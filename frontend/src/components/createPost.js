@@ -2,12 +2,45 @@ import React, { useState, useEffect } from "react";
 import profile from "../image/profile.jpg";
 import "./createPost.css"
 import icone from "../image/icone.png"
+import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+
 
 
 export default function Createpost() {
  const [body, setBody] = useState("")
  const [image, setImage] =useState("")
  const [url, setUrl] = useState("")
+ const navigate = useNavigate();
+
+ const notify = (message)=> toast.error(message);
+ const notifyS = (message)=>toast.success(message)
+ 
+
+ useEffect(()=>{
+    if(url){
+     fetch("http:// localhost:5000/createPost",{
+      method:"post",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorizaton":  "Bearer " + localStorage.getItem("jwt")
+
+    },
+      body:JSON.stringify({body,
+      pic:url})
+    }).then(res=>res.jon())
+    .then(data=> {
+      if(data.error){
+        notify(data.error)
+      }else{
+        notifyS("Post Created Successfully")
+        navigate("/")
+      }
+    })
+    .catch(err=>console.log(err))
+  }
+ },[url])
+
 
  /*posting image to cloudinary */
   const postDetails = ()=>{
@@ -23,21 +56,8 @@ export default function Createpost() {
     }).then(res=>res.json())
     .then(data => setUrl(data.url))
     .catch(err=> console.log(err))
-
-    // saving post to mongodb
-    fetch("http:// localhost:5000/createPost",{
-      method:"post",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorizaton":  "Bearer " + localStorage.getItem("jwt")
-
-    },
-      body:JSON.stringify({body,
-      pic:url})
-    }).then(res=>res.jon())
-    .then(data=>console.log(data))
-    .catch(err=>console.log(err))
   }
+    
 
 
 

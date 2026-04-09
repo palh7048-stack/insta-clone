@@ -23,7 +23,7 @@ function App() {
         <Route path="/profile" element= {<Profile />}></Route>
         <Route path='/createPost' element={<Createpost />}></Route>
       </Routes>
-      <ToastContainer theme='dark'position='top-center' />
+      <ToastContainer theme='dark'position='top-left' />
     </div>
     </BrowserRouter>
   );
