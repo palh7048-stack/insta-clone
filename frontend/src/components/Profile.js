@@ -1,8 +1,24 @@
-import React from "react" ;
+import React,{useEffect,useState} from "react" ;
 import profile from "../image/profile.jpg";
 import "./profile.css";
 
 export default function Profile(){
+const[pic,setPic] = useState([])
+
+useEffect(()=>{
+  fetch("http://localhost:5000/myPosts",{
+    headers:{
+      Authorization :"Bearer " + localStorage.getItem("jwt")
+    }
+  }).then(res=>res.json())
+  .then((result) => {setPic(result)
+    console.log(pic)
+  })
+
+}, [])
+
+
+
   return(
     <div className="profile">
       <div className="profile-frame">
@@ -18,21 +34,15 @@ export default function Profile(){
         <p> 40 followers </p>
         <p> 50 following </p>
         </div>
-       </div>
-       </div>
-      <hr/>
-       {/*Gallery*/}
-        <div className="gallery">
-            <img src={profile} alt="grallery"/>
-             <img src={profile} alt="grallery"/>
-              <img src={profile} alt="grallery"/>
-               <img src={profile} alt="grallery"/>
-                <img src={profile} alt="grallery"/>
-                 <img src={profile} alt="grallery"/>
-                  <img src={profile} alt="grallery"/>
-                  <img src={profile} alt="grallery"/>
-                  <img src={profile} alt="grallery"/>
-        </div>
+      </div>
+      </div>
+    <hr/>
+      {/*Gallery*/}
+      <div className="gallery">
+        {pic.map((pics)=>{
+          return <img key={pics._id} src={pics.photo} className="item"></img>
+        })} 
+    </div>
 
 
       </div>
