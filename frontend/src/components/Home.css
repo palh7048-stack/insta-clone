@@ -1,9 +1,12 @@
 .card{
   max-width: 500px;
   height: max-content;
-  margin: 99px 35%;
+  margin: 20px auto;
   border: 1px solid rgb(173,173,173);
   border-radius: 5px;
+}
+.home {
+  min-height: 0;
 }
 
 .card-header{

@@ -76,12 +76,12 @@ export default function SignUp() {
       .catch(() => notify("Your OTP is expired or invalid"));
   };
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   // ---------------- SIGNUP ----------------
   const handleSignUpClick = () => {
     if (!email) return notify("Please Enter Email");
-     if (!emailRegex.test(email)) return notify("Please Enter Valid Email");
+    // if (!emailRegex.test(email)) return notify("Please Enter Valid Email");
     if (!name) return notify("Please Enter Name");
     if (!userName) return notify("Please Enter userName");
     if (!password) return notify("Please Enter Password");

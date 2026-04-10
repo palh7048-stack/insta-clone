@@ -1,66 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import profile from "../image/profile.jpg";
 import "./createPost.css"
 import icone from "../image/icone.png"
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 
-
 export default function Createpost() {
+
  const [body, setBody] = useState("")
- const [image, setImage] =useState("")
+ const [image, setImage] = useState("")
  const [url, setUrl] = useState("")
  const navigate = useNavigate();
 
- const notify = (message)=> toast.error(message);
- const notifyS = (message)=>toast.success(message)
+ const notify = (message) => toast.error(message);
+const notifyS = (message) => toast.success(message);
  
-
+ 
  useEffect(()=>{
-    if(url){
-     fetch("http:// localhost:5000/createPost",{
+
+  // saving post to database 
+   if(url){
+  fetch("http://localhost:5000/createPost",{
       method:"post",
       headers:{
         "Content-Type":"application/json",
-        "Authorizaton":  "Bearer " + localStorage.getItem("jwt")
-
-    },
-      body:JSON.stringify({body,
-      pic:url})
-    }).then(res=>res.jon())
-    .then(data=> {
-      if(data.error){
-        notify(data.error)
-      }else{
-        notifyS("Post Created Successfully")
-        navigate("/")
-      }
+        "Authorization" :"Bearer " + localStorage.getItem("jwt")
+      },
+      body:JSON.stringify({
+        body,
+        pic:url  
+      }) 
     })
-    .catch(err=>console.log(err))
+    .then(res => res.json())
+    .then(data => {if(data.error){
+      notify(data.error)
+    }else{
+      notifyS("Post Successfully Posted")
+    }
+    navigate("/")
+  })
+    .catch(err => console.log(err))
   }
- },[url])
+},[url])
 
+ 
+ const postDetails = ()=>{
+  console.log(body, image)
+  const data = new FormData()
+  data.append("file",image)
+  data.append("upload_preset","insta-clone")
+  data.append("cloud_name","dqolrgkwz")
 
- /*posting image to cloudinary */
-  const postDetails = ()=>{
-    console.log(body,image)
-    const data = new FormData()
-      data.append("file",image)  
-      data.append("upload_preset","insta-clone")
-      data.append("cloud_name","dtbmdd5um")
-    fetch("https://api.cloudinary.com/v1_1/dtbmdd5um/image/upload",
-    {
-      method:"post",
-      body:data 
-    }).then(res=>res.json())
-    .then(data => setUrl(data.url))
-    .catch(err=> console.log(err))
-  }
-    
-
-
-
+  fetch("https://api.cloudinary.com/v1_1/dqolrgkwz/image/upload",{
+    method:"post",
+    body:data
+  })
+  .then(res=>res.json())
+  .then(data => {setUrl(data.url)
+  })
+  .catch(err=>console.log(err))
+}
   const loadfile = (event)=>{
     var output = document.getElementById('output');
     output.src = URL.createObjectURL(event.target.files[0]);
@@ -89,7 +89,7 @@ export default function Createpost() {
           <h5>John</h5>
         </div>
         <textarea value={body} onChange={(e)=>{setBody(e.target.value) }} type="text" 
-        placeholder="write a caption...."></textarea>
+        placeholder="Write a Caption...."></textarea>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import React,{createContext,useState} from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import { BrowserRouter,Routes,Route } from 'react-router-dom';
@@ -9,13 +10,16 @@ import Profile from './components/Profile';
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Createpost from './components/createPost';
+import { LoginContext } from './context/LoginContext';
 
 
 function App() {
+  const [userLogin,setUserLogin] = useState(false)
   return (
     <BrowserRouter>
     <div className="App">
-      <Navbar/>
+      <LoginContext.Provider value={{setUserLogin}}>
+      <Navbar login={userLogin}/>
       <Routes>
         <Route path="/" element= {<Home/>}></Route>
         <Route path="/signup" element= {<SignUp />}></Route>
@@ -23,7 +27,8 @@ function App() {
         <Route path="/profile" element= {<Profile />}></Route>
         <Route path='/createPost' element={<Createpost />}></Route>
       </Routes>
-      <ToastContainer theme='dark'position='top-left' />
+      <ToastContainer theme='dark'position='top-right' />
+      </LoginContext.Provider>
     </div>
     </BrowserRouter>
   );

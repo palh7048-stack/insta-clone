@@ -1,6 +1,6 @@
 .createPost{
   max-width: 500px;
-  margin: 110px 35% ;
+  margin: 10px auto ;
   border: 1px solid rgb(173,173,173);
   border-radius: 5px;
 }
