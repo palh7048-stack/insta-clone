@@ -124,7 +124,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // ---------------- SIGNIN ----------------
-router.post("/signin",reqLogin, async (req, res) => {
+router.post("/signin", async (req, res) => {
   const { userName, password } = req.body;
 
   if (!userName) {
