@@ -18,8 +18,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS          
   }
 });
-console.log(process.env.USER_EMAIL)
-console.log(process.env.EMAIL_PASS)
+
 
 // ---------------- GET ROUTE ----------------
 router.get("/", (req, res) => {

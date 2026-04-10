@@ -12,10 +12,6 @@ router.get("/allposts",reqLogin, async (req,res)=>{
      .catch(err => console.log(err))
 })
 
-
-
-
-
 router.post("/createPost", reqLogin, async (req, res) => {
   try {
     const { body, pic } = req.body;
@@ -43,5 +39,26 @@ router.post("/createPost", reqLogin, async (req, res) => {
     res.status(500).json({ error: "Failed to create post" });
   }
 });
+
+router.get("/myPosts",reqLogin,async(req,res)=>{
+  POST.find({postedBy: req.user._id})
+   .populate("postedBy","_id name")
+     .then(mypost=>{
+       res.json(mypost)
+  })
+  
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
