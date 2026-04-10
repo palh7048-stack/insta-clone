@@ -5,7 +5,6 @@ const USER = require("../models/model.js");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer"); 
 const reqLogin = require("../middlewares/reqLogin.js");
-require("dotenv").config();
 
 const JWT_SECRET = "harsh@144";
 
@@ -15,10 +14,12 @@ const otpStore = {};
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.USER_EMAIL,      
-    pass:  process.env.EMAIL_PASS        
+    user: process.env.USER_EMAIL,     
+    pass: process.env.EMAIL_PASS          
   }
 });
+console.log(process.env.USER_EMAIL)
+console.log(process.env.EMAIL_PASS)
 
 // ---------------- GET ROUTE ----------------
 router.get("/", (req, res) => {
@@ -123,7 +124,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // ---------------- SIGNIN ----------------
-router.post("/signin", async (req, res) => {
+router.post("/signin",reqLogin, async (req, res) => {
   const { userName, password } = req.body;
 
   if (!userName) {
