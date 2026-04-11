@@ -30,7 +30,7 @@ function App() {
         <Route path='/createPost' element={<Createpost />}></Route>
       </Routes>
       <ToastContainer theme='dark'position='top-right' />
-      {modalOpen && <Modal setModalOpen={setModalOpen}></Modal>}
+      {modalOpen && <Modal setModalOpen={setModalOpen} setUserLogin={setUserLogin}></Modal>}
       </LoginContext.Provider>
     </div>
     </BrowserRouter>

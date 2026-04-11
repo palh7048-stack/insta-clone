@@ -52,7 +52,6 @@ export default function Home() {
 
             {/*card-content*/}
             <div className="add-comment">
-              <span className="material-symbols-outlined">mood</span>
               <input type="text" placeholder="Add a comment" />
               <button className="comment">Post</button>
             </div>

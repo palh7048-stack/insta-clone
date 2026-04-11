@@ -44,7 +44,8 @@ const {setUserLogin} =useContext(LoginContext)
           notify(data.error);
         } else {
           notifyS( "Login successful");
-          localStorage.setItem("jwt",data.token); 
+          localStorage.setItem("jwt",data.token);
+          localStorage.setItem("user",JSON.stringify(data.user));
           setUserLogin(true)
           navigate("/"); 
         }

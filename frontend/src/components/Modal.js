@@ -3,7 +3,7 @@ import { RiCloseLine } from "react-icons/ri";
 import "./Modal.css";
 import { useNavigate } from "react-router-dom";
 
-export default function Modal({ setModalOpen }) {
+export default function Modal({ setModalOpen, setUserLogin }) {
   const navigate = useNavigate();
   return (
     <div className="darkBg" onClick={() => setModalOpen(false)}>
@@ -25,6 +25,7 @@ export default function Modal({ setModalOpen }) {
                 onClick={() => {
                   setModalOpen(false);
                   localStorage.clear();
+                  setUserLogin(false);
                   navigate("./signin");
                 }}> Log Out
               </button>
