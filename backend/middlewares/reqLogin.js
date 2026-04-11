@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const USER = mongoose.model("USER")
+require("dotenv").config();
 
-const JWT_SECRET = "harsh@144";
+const JWT_SECRET = process.env.JWT_SECRET;
 module.exports = (req,res,next)=>{
   const {authorization} = req.headers;
   if(!authorization){

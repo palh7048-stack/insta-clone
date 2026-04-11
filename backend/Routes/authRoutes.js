@@ -5,8 +5,9 @@ const USER = require("../models/model.js");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer"); 
 const reqLogin = require("../middlewares/reqLogin.js");
+require("dotenv").config();
 
-const JWT_SECRET = "harsh@144";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const otpStore = {};
 
@@ -14,7 +15,7 @@ const otpStore = {};
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.USER_EMAIL,     
+    user: process.env.EMAIL_USER,  
     pass: process.env.EMAIL_PASS          
   }
 });
@@ -48,7 +49,7 @@ router.post("/send-otp", async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: process.env.USER_EMAIL,
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Your OTP  for registration", 
       html: `<h2>Your OTP is: ${otp} for Social Media App</h2> and Fill correct OTP in the OTP field for successful registration.<br/><br> <style>color: #c51515;</style> Note: Please  do not share your OTP with anyone. Your OTP is valid for 1 minute.<br/><br/><p style="color: #c51515;"> please do not reply.</p>`,
@@ -123,7 +124,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // ---------------- SIGNIN ----------------
-router.post("/signin", async (req, res) => {
+router.post("/signin",async (req, res) => {
   const { userName, password } = req.body;
 
   if (!userName) {
@@ -144,8 +145,11 @@ router.post("/signin", async (req, res) => {
 
     if (isMatch) {
       const token = jwt.sign({ _id: savesUser._id }, JWT_SECRET);
-      res.json({ token });
-      console.log(token)
+
+      const{_id, name, email, userName} = savesUser;
+      res.json({ token,user:{_id, name, email, userName} });
+
+     /* console.log({token,user:{_id, name, email, userName} });*/
     } else {
       return res.status(422).json({ error: "Invalid Password! please Enter correct Password" });
     }

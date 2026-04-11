@@ -3,8 +3,6 @@ const router = express.Router();
 const reqLogin = require("../middlewares/reqLogin.js");
 const POST = require("../models/post.js");
 
-
-
 router.get("/allposts",reqLogin, async (req,res)=>{
   POST.find()
      .populate("postedBy","_id name")
@@ -49,16 +47,32 @@ router.get("/myPosts",reqLogin,async(req,res)=>{
   
 })
 
+router.put("/like",reqLogin,async(req,res)=>{
+  POST.findOneAndReplace(req.body.postId,{
+    $push:{likes:req.user._id}
+  },{
+    new:true
+  }).exec((err,result)=>{
+    if(err){
+      return res.status(422).json({error:err})
+    }else{
+      res.json(result)
+    }
+  })
+})
 
-
-
-
-
-
-
-
-
-
-
+router.put("/unlike",reqLogin,async(req,res)=>{
+  POST.findOneAndReplace(req.body.postId,{
+    $pull:{likes:req.user._id}
+  },{
+    new:true
+  }).exec((err,result)=>{
+    if(err){
+      return res.status(422).json({error:err})
+    }else{
+      res.json(result)
+    }
+  })
+})
 
 module.exports = router;
