@@ -149,7 +149,7 @@ router.post("/signin",async (req, res) => {
       const{_id, name, email, userName} = savesUser;
       res.json({ token,user:{_id, name, email, userName} });
 
-     /* console.log({token,user:{_id, name, email, userName} });*/
+      console.log({token,user:{_id, name, email, userName} });
     } else {
       return res.status(422).json({ error: "Invalid Password! please Enter correct Password" });
     }

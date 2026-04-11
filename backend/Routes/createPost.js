@@ -3,23 +3,23 @@ const router = express.Router();
 const reqLogin = require("../middlewares/reqLogin.js");
 const POST = require("../models/post.js");
 
-router.get("/allposts",reqLogin, async (req,res)=>{
+router.get("/allposts", reqLogin, async (req, res) => {
   POST.find()
-     .populate("postedBy","_id name")
-     .then(posts => res.json(posts))
-     .catch(err => console.log(err))
-})
+    .populate("postedBy", "_id name")
+    .then(posts => res.json(posts))
+    .catch(err => console.log(err));
+});
 
 router.post("/createPost", reqLogin, async (req, res) => {
   try {
     const { body, pic } = req.body;
-    console.log(pic)
+    console.log(pic);
 
-    if (!body ) {
-      return res.status(422).json({error:"Please enter the body of the post"});
+    if (!body) {
+      return res.status(422).json({ error: "Please enter the body of the post" });
     }
     if (!pic) {
-      return res.status(422).json({error:"Please upload a picture"});
+      return res.status(422).json({ error: "Please upload a picture" });
     }
 
     const post = new POST({
@@ -38,41 +38,45 @@ router.post("/createPost", reqLogin, async (req, res) => {
   }
 });
 
-router.get("/myPosts",reqLogin,async(req,res)=>{
-  POST.find({postedBy: req.user._id})
-   .populate("postedBy","_id name")
-     .then(mypost=>{
-       res.json(mypost)
-  })
-  
-})
+router.get("/myPosts", reqLogin, async (req, res) => {
+  POST.find({ postedBy: req.user._id })
+    .populate("postedBy", "_id name")
+    .then(mypost => {
+      res.json(mypost);
+    })
+    .catch(err => console.log(err));
+});
 
-router.put("/like",reqLogin,async(req,res)=>{
-  POST.findOneAndReplace(req.body.postId,{
-    $push:{likes:req.user._id}
-  },{
-    new:true
-  }).exec((err,result)=>{
-    if(err){
-      return res.status(422).json({error:err})
-    }else{
-      res.json(result)
-    }
-  })
-})
+router.put("/like", reqLogin, async (req, res) => {
+  POST.findOneAndUpdate(
+    { _id: req.body.postId },
+    {
+      $push: { likes: req.user._id }
+    },
+    { new: true }
+  )
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      return res.status(422).json({ error: err });
+    });
+});
 
-router.put("/unlike",reqLogin,async(req,res)=>{
-  POST.findOneAndReplace(req.body.postId,{
-    $pull:{likes:req.user._id}
-  },{
-    new:true
-  }).exec((err,result)=>{
-    if(err){
-      return res.status(422).json({error:err})
-    }else{
-      res.json(result)
-    }
-  })
-})
+router.put("/unlike", reqLogin, async (req, res) => {
+  POST.findOneAndUpdate(
+    { _id: req.body.postId },
+    {
+      $pull: { likes: req.user._id }
+    },
+    { new: true }
+  )
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      return res.status(422).json({ error: err });
+    });
+});
 
 module.exports = router;
