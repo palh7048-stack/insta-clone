@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
 
 // ---------------- GET ROUTE ----------------
 router.get("/", (req, res) => {
-  res.send("Hello");
+  res.send("");
 });
 
 // ---------------- CREATE POST ----------------

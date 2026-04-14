@@ -20,14 +20,14 @@ app.get("/", (req, res) => {
   res.send("API is running");
 });
 
-// ---------------- Safety fix (prevents crash issues) ----------------
-process.on("uncaughtException", (err) => {
-  console.log("Uncaught Exception:", err);
-});
+// // ---------------- Safety fix (prevents crash issues) ----------------
+// process.on("uncaughtException", (err) => {
+//   console.log("Uncaught Exception:", err);
+// });
 
-process.on("unhandledRejection", (err) => {
-  console.log("Unhandled Rejection:", err);
-});
+// process.on("unhandledRejection", (err) => {
+//   console.log("Unhandled Rejection:", err);
+// });
 
 // ---------------- Server ----------------
 app.listen(PORT, () => {

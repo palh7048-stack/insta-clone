@@ -79,4 +79,26 @@ router.put("/unlike", reqLogin, async (req, res) => {
     });
 });
 
+router.put("/comment", reqLogin, async (req, res) => {
+  const comment = {
+  text: req.body.text,
+  postedBy: req.user._id
+};
+
+POST.findByIdAndUpdate(
+  req.body.postId,
+  {
+    $push: { comments: comment }
+  },
+  { new: true }
+)
+.populate("comments.postedBy", "_id name")
+    .then(result => {
+      res.json(result);
+    })
+    .catch(err => {
+      return res.status(422).json({ error: err });
+    });
+});
+
 module.exports = router;
