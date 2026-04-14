@@ -44,6 +44,7 @@ const notifyS = (message) => toast.success(message);
   }
 },[url])
 
+
  
  const postDetails = ()=>{
   console.log(body, image)

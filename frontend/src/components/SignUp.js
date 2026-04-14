@@ -57,7 +57,7 @@ export default function SignUp() {
           setOtpVerified(true);
 
         
-          fetch("http://localhost:5000/signup", {
+          fetch("/signup", {
             method: "post",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, userName, email, password })
