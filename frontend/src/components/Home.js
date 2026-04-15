@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import profile from "../image/profile.jpg";
 import "./Home.css";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 export default function Home() {
 
@@ -131,7 +132,9 @@ const makeComment = (id,text) =>{
               <div className="card-pic">
                 <img src={profile} alt="profile-image" />
               </div>
-              <h5>{posts?.postedBy?.name || "unknown user"}</h5> 
+              <h5><Link to={`/profile/${posts.postedBy._id}`}>
+              {posts.postedBy.name}
+              </Link></h5> 
             </div>
 
             <div className="card-image">
@@ -178,7 +181,7 @@ const makeComment = (id,text) =>{
                   <div className="card-pic">
                   <img src={profile} alt="profile-image" />
               </div>
-                  <h5>{item?.postedBy?.name}</h5>
+                  <h5>{item.postedBy.name}</h5>
             </div>
 
                   <div className="comment-section" 
