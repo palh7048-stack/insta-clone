@@ -24,7 +24,7 @@ export default function Home() {
       navigate("/signup"); 
       return;
     }
-
+      // Fetching all Posts
     fetch("http://localhost:5000/allposts", { 
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("jwt"),
@@ -35,7 +35,7 @@ export default function Home() {
       .catch((err) => console.log(err));
   }, []);
 
-  // show comment
+  // show and hide comment
   const toggleComment = (posts) =>{
     if(show){
       setShow(false)
@@ -163,7 +163,7 @@ const makeComment = (id,text) =>{
           </div>
         );
       })}
-
+        {/*show comment */}
       {show && (
         <div className="show-comments">
         <div className="container">
