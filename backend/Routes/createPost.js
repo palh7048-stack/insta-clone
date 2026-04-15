@@ -61,6 +61,8 @@ router.put("/like", reqLogin, async (req, res) => {
     },
     { new: true }
   )
+    .populate("postedBy", "_id name")   
+    .populate("comments.postedBy", "_id name") 
     .then(result => {
       res.json(result);
     })
@@ -78,6 +80,8 @@ router.put("/unlike", reqLogin, async (req, res) => {
     },
     { new: true }
   )
+      .populate("postedBy", "_id name")   
+      .populate("comments.postedBy", "_id name") 
     .then(result => {
       res.json(result);
     })
@@ -123,7 +127,6 @@ router.delete('/deletePost/:postId', reqLogin, async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    // ownership check (IMPORTANT)
     if (post.postedBy._id.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "Unauthorized" });
     }
