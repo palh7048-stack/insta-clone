@@ -6,6 +6,7 @@ const POST = require("../models/post.js");
 router.get("/allposts", reqLogin, async (req, res) => {
   POST.find()
     .populate("postedBy", "_id name")
+    .populate("comments.postedBy","_id name")
     .then(posts => res.json(posts))
     .catch(err => console.log(err));
 });
@@ -93,6 +94,7 @@ POST.findByIdAndUpdate(
   { new: true }
 )
 .populate("comments.postedBy", "_id name")
+.populate("postedBy","_id name")
     .then(result => {
       res.json(result);
     })
