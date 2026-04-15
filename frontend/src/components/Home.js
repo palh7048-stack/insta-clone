@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import profile from "../image/profile.jpg";
 import "./Home.css";
 import { toast } from "react-toastify";
@@ -14,6 +14,8 @@ export default function Home() {
   const [comment, setComment] = useState("");
   const[show, setShow]= useState(false);
   const[item, setItem] = useState([])
+
+  const user = JSON.parse(localStorage.getItem("user")); 
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -33,17 +35,13 @@ export default function Home() {
       .catch((err) => console.log(err));
   }, []);
 
-  // show and hide comment
+  // show comment
   const toggleComment = (posts) =>{
     if(show){
       setShow(false)
-      console.log("hide")
-      
     }else{
       setShow(true)
-      setItem(posts)
-      console.log(item)
-      console.log("show")
+      if(posts) setItem(posts)   
     }
   };
 
@@ -68,7 +66,6 @@ const likePost = (id) =>{
       }
     })
     setData(newData)
-    console.log(result)
   })    
 }
 
@@ -93,10 +90,10 @@ const unlikePost = (id) =>{
       }
     })
     setData(newData)
-    console.log(result)
   })    
 }
 
+// make a comment
 const makeComment = (id,text) =>{
   fetch("http://localhost:5000/comment", {
     method: "put",
@@ -121,18 +118,15 @@ const makeComment = (id,text) =>{
     setData(newData)
     setComment("")
     notifyS("Comment Posted")
-    
   })    
 }
 
   return (
     <div className="home">
-       {/* cards */}
       {data.map((posts) => {
         return(
-          <div className="card">
+          <div className="card" key={posts._id}>
 
-            {/*card-header*/}
             <div className="card-header">
               <div className="card-pic">
                 <img src={profile} alt="profile-image" />
@@ -140,16 +134,13 @@ const makeComment = (id,text) =>{
               <h5>{posts?.postedBy?.name || "unknown user"}</h5> 
             </div>
 
-              {/*card-image*/}
             <div className="card-image">
               <img src={posts.photo} alt="post" />
             </div>
 
-            {/*card-content*/}
             <div className="card-content">
               {
-                posts.likes.includes(JSON.parse(localStorage.getItem("user"))._id)
-                ? (
+                user && posts.likes.includes(user._id) ? (  
                   <span className="material-symbols-outlined 
                   material-symbols-outlined-red"
               onClick={()=>{unlikePost(posts._id)}}>favorite</span>
@@ -164,7 +155,6 @@ const makeComment = (id,text) =>{
                 View all Comment</p>
             </div>
 
-            {/*add comment*/}
             <div className="add-comment">
               <span className="material-symbols-outlined">mood</span>
               <input type="text" placeholder="Add a comment" value={comment} onChange={(e)=>{setComment(e.target.value)}} />
@@ -174,45 +164,41 @@ const makeComment = (id,text) =>{
         );
       })}
 
-      {/*show comments */}
-        {show && (
+      {show && (
         <div className="show-comments">
         <div className="container">
           <div className="postPic">
-            <img src={item.photo}
-            alt="post" />
+            <img src={item?.photo} alt="post" /> 
             </div>
             <div className="details">
 
-                  {/*card-header*/}
                 <div className="card-header"
                 style= {{borderBottom:"1px solid #00000029"}} >
 
                   <div className="card-pic">
                   <img src={profile} alt="profile-image" />
               </div>
-                  <h5>{item.postedBy.name}</h5> 
+                  <h5>{item?.postedBy?.name}</h5>
             </div>
-                  {/*comment section */}
+
                   <div className="comment-section" 
                   style= {{borderBottom:"1px solid #00000029"}}>
-                    {item.comments.map((comment)=>{
+                    {item?.comments?.map((comment)=>{   
                       return(
                         <p className="comm">
-                      <span className="commmenter" style={{fontWeight:"bolder"}}>{comment.postedBy.name}{" "}</span>
-                      <span className="commentText"> {comment.text}</span>
+                      <span className="commmenter" style={{fontWeight:"bolder"}}>{comment?.postedBy?.name}{" "}</span>
+                      <span className="commentText"> {comment?.text}</span>
                       </p>
                       )
                     })}
                     
                   </div>
 
-                    {/*card-content*/}
               <div className="card-content">
-                    <p>{item.likes.length}</p>
-                    <p>{item.body}</p>
+                    <p>{item?.likes?.length}</p>
+                    <p>{item?.body}</p>
               </div>
-            {/*add comment*/}
+
             <div className="add-comment">
               <span className="material-symbols-outlined">mood</span>
               <input type="text" placeholder="Add a comment" value={comment} onChange={(e)=>{setComment(e.target.value)}} />
