@@ -3,6 +3,7 @@ const router = express.Router();
 const reqLogin = require("../middlewares/reqLogin.js");
 const POST = require("../models/post.js");
 
+// All Post
 router.get("/allposts", reqLogin, async (req, res) => {
   POST.find()
     .populate("postedBy", "_id name")
@@ -11,6 +12,7 @@ router.get("/allposts", reqLogin, async (req, res) => {
     .catch(err => console.log(err));
 });
 
+// Create Post
 router.post("/createPost", reqLogin, async (req, res) => {
   try {
     const { body, pic } = req.body;
@@ -39,15 +41,18 @@ router.post("/createPost", reqLogin, async (req, res) => {
   }
 });
 
+// My Post
 router.get("/myPosts", reqLogin, async (req, res) => {
   POST.find({ postedBy: req.user._id })
     .populate("postedBy", "_id name")
+     .populate("comments.postedBy","_id name")
     .then(mypost => {
       res.json(mypost);
     })
     .catch(err => console.log(err));
 });
 
+// for Like
 router.put("/like", reqLogin, async (req, res) => {
   POST.findOneAndUpdate(
     { _id: req.body.postId },
@@ -64,6 +69,7 @@ router.put("/like", reqLogin, async (req, res) => {
     });
 });
 
+// for UnLike
 router.put("/unlike", reqLogin, async (req, res) => {
   POST.findOneAndUpdate(
     { _id: req.body.postId },
@@ -80,6 +86,7 @@ router.put("/unlike", reqLogin, async (req, res) => {
     });
 });
 
+//  for comment
 router.put("/comment", reqLogin, async (req, res) => {
   const comment = {
   text: req.body.text,
@@ -101,6 +108,32 @@ POST.findByIdAndUpdate(
     .catch(err => {
       return res.status(422).json({ error: err });
     });
+});
+
+// Delete Post 
+
+router.delete('/deletePost/:postId', reqLogin, async (req, res) => {
+  try {
+    console.log(req.params.postId);
+
+    const post = await POST.findById({_id: req.params.postId})
+      .populate("postedBy", "_id");
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // ownership check (IMPORTANT)
+    if (post.postedBy._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    await post.deleteOne();
+
+    return res.json({ message: "Post Successfully Deleted" });
+
+  } catch (err) {
+    return res.status(422).json({ error: err.message });
+  }
 });
 
 module.exports = router;
