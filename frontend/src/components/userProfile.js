@@ -1,14 +1,50 @@
 import React,{useEffect,useState} from "react" ;
 import profile from "../image/profile.jpg";
 import "./profile.css";
-import PostDetails from "./postDetails";
 import { useParams } from "react-router-dom";
 
 export default function UserProfile(){
 const{userid} = useParams()
-console.log(userid)
+// console.log(userid)
+const[isFollow,setIsFollow] = useState(false)
 const[user,setUser] = useState("")
 const [posts,setPosts] = useState([])
+
+// follow user
+const followUser = (userId)=>{
+fetch("http://localhost:5000/follow",{
+  method: "put",
+  headers:{
+    "Content-Type" :"application/json",
+    Authorization: "Bearer " + localStorage.getItem("jwt"),
+  },
+  body: JSON.stringify({
+    followId: userId
+  })
+}).then(res=>res.json())
+ .then((data)=>{
+  console.log(data)
+  setIsFollow(true)
+})
+}
+
+// unfollow user
+const unfollowUser = (userId)=>{
+fetch("http://localhost:5000/unfollow",{
+  method: "put",
+  headers:{
+    "Content-Type" :"application/json",
+    Authorization: "Bearer " + localStorage.getItem("jwt"),
+  },
+  body: JSON.stringify({
+    followId: userId
+  })
+}).then(res=>res.json())
+.then((data)=>{
+  console.log(data)
+  setIsFollow(false)
+})
+}
 
 useEffect(()=>{
   fetch(`http://localhost:5000/user/${userid}`,{
@@ -17,12 +53,15 @@ useEffect(()=>{
     }
   }).then(res=>res.json())
   .then((result) => {
-    console.log(result)
-    setUser(result.user)
-    setPosts(result.post)
+    //console.log(result);
+    setUser(result.user);
+    setPosts(result.post);
+    if(result.user.followers.includes(JSON.parse(localStorage.getItem("user"))._id)){
+      setIsFollow(true)
+    }
   })
 
-}, [])
+}, [isFollow])
 
 
   return(
@@ -34,11 +73,21 @@ useEffect(()=>{
       </div>
           {/*profile-data*/}
       <div className="profile-data">
-        <h1>{user.name}</h1>
+        <div style={{display:"flex",alignItems:"center",justifyContent: "space-between"}}>
+          <h1>{user.name}</h1>
+          <button className="followBtn" onClick={()=>{
+            if(isFollow){
+              unfollowUser(user._id);
+            }else{
+              followUser(user._id);
+            }
+          }} >{isFollow ? "Unfollow" : "Follow"}</button>
+        </div>
+        
         <div className="profile-info">
         <p> {posts.length} posts </p>
-        <p> 40 followers </p>
-        <p> 50 following </p>
+        <p> {user.followers ? user.followers.length: "0"} followers </p>
+        <p> {user.following ? user.following.length : "0"} following </p>
         </div>
       </div>
       </div>
@@ -47,16 +96,9 @@ useEffect(()=>{
       <div className="gallery">
         {posts.map((pics)=>{
           return <img key={pics._id} src={pics.photo}
-          // onClick={()=>{
-          //   toggleDetails(pics)
-          // }}
          className="item"></img>
         })} 
     </div>
-
-    {/* {show &&
-      <PostDetails item={posts}  toggleDetails={toggleDetails} />
-    } */}
 
       </div>
     
