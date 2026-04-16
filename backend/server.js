@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", require("./Routes/authRoutes"));
 app.use("/", require("./Routes/createPost.js"));
-app.use("/", require("./Routes/otherUser.js"))
+app.use("/", require("./Routes/User.js"))
 
 // ---------------- Root route ----------------
 app.get("/", (req, res) => {
