@@ -115,7 +115,6 @@ POST.findByIdAndUpdate(
 });
 
 // Delete Post 
-
 router.delete('/deletePost/:postId', reqLogin, async (req, res) => {
   try {
     console.log(req.params.postId);
@@ -138,5 +137,19 @@ router.delete('/deletePost/:postId', reqLogin, async (req, res) => {
     return res.status(422).json({ error: err.message });
   }
 });
+
+
+// to show  following post 
+router.get("/myfollowingpost",reqLogin,(req,res)=>{
+  POST.find({postedBy:{$in: req.user.following }})
+    .populate("postedBy","_id name")
+    .populate("comment.postedBy","id name")
+    .then(posts=>{
+      res.json(posts)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+})
 
 module.exports = router;
