@@ -2,11 +2,13 @@ import React,{useEffect,useState} from "react" ;
 import profile from "../image/profile.jpg";
 import "./profile.css";
 import PostDetails from "./postDetails";
+import ProfilePic from "./ProfilePic";
 
 export default function Profile(){
 const[pic,setPic] = useState([])
 const[show, setShow] = useState(false)
 const [posts,setPosts] = useState([])
+const[changePic, setChangePic] = useState(false)
 
 const toggleDetails = (posts) =>{
     if(show){
@@ -16,6 +18,14 @@ const toggleDetails = (posts) =>{
       if(posts) setPosts(posts)   
     }
   };
+
+  const changeProfile = () =>{
+    if(changePic){
+      setChangePic(false)
+    }else{
+      setChangePic(true)
+    }
+  }
 
 
 useEffect(()=>{
@@ -37,7 +47,9 @@ useEffect(()=>{
       <div className="profile-frame">
        {/*profile-pic*/}
       <div className="profile-pic">
-        <img src={profile} alt="profile-photo"/>
+        <img 
+         onClick={changeProfile}
+        src={profile} alt="profile-photo"/>
       </div>
           {/*profile-data*/}
       <div className="profile-data">
@@ -64,8 +76,10 @@ useEffect(()=>{
     {show &&
       <PostDetails item={posts}  toggleDetails={toggleDetails} />
     }
-
-      </div>
+    {
+      changePic && <ProfilePic/>
+    }
+    </div>
     
   )
 }
