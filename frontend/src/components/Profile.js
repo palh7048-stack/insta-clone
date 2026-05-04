@@ -1,13 +1,14 @@
 import React,{useEffect,useState} from "react" ;
-import profile from "../image/profile.jpg";
 import "./profile.css";
 import PostDetails from "./postDetails";
 import ProfilePic from "./ProfilePic";
 
 export default function Profile(){
+var picLink = "https://cdn-icons-png.flaticon.com/128/847/847969.png"
 const[pic,setPic] = useState([])
 const[show, setShow] = useState(false)
 const [posts,setPosts] = useState([])
+const[user, setUser] = useState("")
 const[changePic, setChangePic] = useState(false)
 
 const toggleDetails = (posts) =>{
@@ -29,12 +30,14 @@ const toggleDetails = (posts) =>{
 
 
 useEffect(()=>{
-  fetch("http://localhost:5000/myPosts",{
+  fetch(`http://localhost:5000/user/${JSON.parse(localStorage.getItem("user"))._id}`,{
     headers:{
       Authorization :"Bearer " + localStorage.getItem("jwt")
     }
   }).then(res=>res.json())
-  .then((result) => {setPic(result)
+  .then((result) => {
+    setPic(result.post)
+    setUser(result.user)
     console.log(pic)
   })
 
@@ -49,15 +52,15 @@ useEffect(()=>{
       <div className="profile-pic">
         <img 
          onClick={changeProfile}
-        src={profile} alt="profile-photo"/>
+        src={user.Photo ? user.Photo : picLink} alt="profile-photo"/>
       </div>
           {/*profile-data*/}
       <div className="profile-data">
         <h1>{JSON.parse(localStorage.getItem("user")).name}</h1>
         <div className="profile-info">
-        <p> 40 posts </p>
-        <p> 40 followers </p>
-        <p> 50 following </p>
+        <p> {pic ? pic.length: "0"} posts </p>
+        <p> {user.followers ? user.followers.length : "0"} followers </p>
+        <p>  {user.following ? user.following.length : "0"} following </p>
         </div>
       </div>
       </div>
@@ -77,7 +80,7 @@ useEffect(()=>{
       <PostDetails item={posts}  toggleDetails={toggleDetails} />
     }
     {
-      changePic && <ProfilePic/>
+      changePic && <ProfilePic changeProfile = {changeProfile} />
     }
     </div>
     

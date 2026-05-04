@@ -17,10 +17,10 @@ export default function Createpost() {
 const notifyS = (message) => toast.success(message);
  
  
- useEffect(()=>{
+  useEffect(()=>{
 
   // saving post to database 
-   if(url){
+    if(url){
   fetch("http://localhost:5000/createPost",{
       method:"post",
       headers:{
@@ -45,7 +45,7 @@ const notifyS = (message) => toast.success(message);
 },[url])
 
 
- 
+ // post image to cloudinary
  const postDetails = ()=>{
   console.log(body, image)
   const data = new FormData()

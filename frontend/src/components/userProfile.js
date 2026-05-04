@@ -4,8 +4,8 @@ import "./profile.css";
 import { useParams } from "react-router-dom";
 
 export default function UserProfile(){
+var picLink = "https://cdn-icons-png.flaticon.com/128/847/847969.png"
 const{userid} = useParams()
-// console.log(userid)
 const[isFollow,setIsFollow] = useState(false)
 const[user,setUser] = useState("")
 const [posts,setPosts] = useState([])
@@ -69,7 +69,7 @@ useEffect(()=>{
       <div className="profile-frame">
        {/*profile-pic*/}
       <div className="profile-pic">
-        <img src={profile} alt="profile-photo"/>
+        <img src={user.Photo ? user.Photo : picLink} alt="profile-photo"/>
       </div>
           {/*profile-data*/}
       <div className="profile-data">

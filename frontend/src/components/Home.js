@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 export default function Home() {
+  var picLink = "https://cdn-icons-png.flaticon.com/128/847/847969.png";
 
   const notify = (message) => toast.error(message);
   const notifyS = (message) => toast.success(message);
@@ -130,7 +131,7 @@ const makeComment = (id,text) =>{
 
             <div className="card-header">
               <div className="card-pic">
-                <img src={profile} alt="profile-image" />
+                <img src={posts.postedBy.Photo ? posts.postedBy.Photo : picLink} alt="profile-image" />
               </div>
               <h5><Link to={`/profile/${posts.postedBy._id}`}>
               {posts.postedBy.name}

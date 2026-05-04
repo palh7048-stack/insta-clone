@@ -1,11 +1,10 @@
 import React from 'react';
 import './postDetails.css';
-import profile from "../image/profile.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function PostDetails({item,toggleDetails}){
-
+ var picLink = "https://cdn-icons-png.flaticon.com/128/847/847969.png";
   const navigate = useNavigate();
   const notify = (message) => toast.error(message);
   const notifyS = (message) => toast.success(message);
@@ -41,7 +40,7 @@ const removePosts = (postId)=>{
                     style= {{borderBottom:"1px solid #00000029"}} >
     
                       <div className="card-pic">
-                      <img src={profile} alt="profile-image" />
+                      <img src={item?.postedBy?.Photo || picLink} alt="profile-image" />
                   </div>
                       <h5>{item?.postedBy?.name}</h5>
                       <div className='deletePost' onClick={()=>{removePosts(item._id)}}>
