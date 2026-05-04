@@ -6,8 +6,9 @@ const POST = require("../models/post.js");
 // All Post
 router.get("/allposts", reqLogin, async (req, res) => {
   POST.find()
-    .populate("postedBy", "_id name")
-    .populate("comments.postedBy","_id name")
+    .populate("postedBy", "_id name Photo")
+    .populate("comments.postedBy","_id name Photo")
+    .sort("-createdAt")
     .then(posts => res.json(posts))
     .catch(err => console.log(err));
 });
@@ -45,7 +46,8 @@ router.post("/createPost", reqLogin, async (req, res) => {
 router.get("/myPosts", reqLogin, async (req, res) => {
   POST.find({ postedBy: req.user._id })
     .populate("postedBy", "_id name")
-     .populate("comments.postedBy","_id name")
+    .populate("comments.postedBy","_id name Photo")
+    .sort("-createdAt")
     .then(mypost => {
       res.json(mypost);
     })
@@ -61,8 +63,8 @@ router.put("/like", reqLogin, async (req, res) => {
     },
     { new: true }
   )
-    .populate("postedBy", "_id name")   
-    .populate("comments.postedBy", "_id name") 
+    .populate("postedBy", "_id name Photo")   
+    .populate("comments.postedBy", "_id name Photo") 
     .then(result => {
       res.json(result);
     })
@@ -80,8 +82,8 @@ router.put("/unlike", reqLogin, async (req, res) => {
     },
     { new: true }
   )
-      .populate("postedBy", "_id name")   
-      .populate("comments.postedBy", "_id name") 
+      .populate("postedBy", "_id name Photo")   
+      .populate("comments.postedBy", "_id name Photo") 
     .then(result => {
       res.json(result);
     })
@@ -104,8 +106,8 @@ POST.findByIdAndUpdate(
   },
   { new: true }
 )
-.populate("comments.postedBy", "_id name")
-.populate("postedBy","_id name")
+.populate("comments.postedBy", "_id name Photo")
+.populate("postedBy","_id name Photo")
     .then(result => {
       res.json(result);
     })
@@ -142,8 +144,8 @@ router.delete('/deletePost/:postId', reqLogin, async (req, res) => {
 // to show  following post 
 router.get("/myfollowingpost",reqLogin,(req,res)=>{
   POST.find({postedBy:{$in: req.user.following }})
-    .populate("postedBy","_id name")
-    .populate("comment.postedBy","id name")
+    .populate("postedBy","_id name Photo")
+    .populate("comment.postedBy","id name Photo")
     .then(posts=>{
       res.json(posts)
     })
